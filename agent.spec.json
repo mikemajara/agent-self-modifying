@@ -1,0 +1,51 @@
+{
+  "specVersion": "1",
+  "templateVersion": "0.1.0",
+  "identity": {
+    "name": "Self-modifying agent",
+    "purpose": "A user-owned agent that remembers facts and can modify its own allowlisted repository files, commit to an agent/* branch, open a Vercel preview, and promote production after explicit owner confirmation.",
+    "instructions": "agent/instructions/00-identity.md"
+  },
+  "model": {
+    "id": "openai/gpt-5.6-luna"
+  },
+  "channels": {
+    "telegram": true,
+    "web": true,
+    "tui": true
+  },
+  "memory": {
+    "sessionTtlDays": 7,
+    "provenanceTtlDays": 30,
+    "auditTtlDays": 90,
+    "tombstoneTtlDays": 14,
+    "maxDurableEntries": 200,
+    "maxValueChars": 4000,
+    "sensitiveCategories": ["credentials", "secrets", "payment"]
+  },
+  "mutation": {
+    "allowlist": [
+      "agent/skills/**",
+      "agent/instructions/**/*.md",
+      "config/**"
+    ],
+    "denylist": [
+      "agent/tools/**",
+      "agent/lib/**",
+      "agent/channels/**",
+      "agent/extensions/**",
+      "agent/instructions/**/*.ts",
+      "agent/agent.ts",
+      "package.json",
+      "package-lock.json",
+      "**/.github/**",
+      "**/node_modules/**"
+    ],
+    "requireProductionConfirm": true,
+    "branchPrefix": "agent/"
+  },
+  "featureFlags": {
+    "markdownAutoApply": false,
+    "redisSearch": false
+  }
+}
