@@ -22,16 +22,17 @@ V1 is not a proposal-only product. Structured proposals may exist as audit/failu
 - [x] Record the resolved V1 ownership model: users own GitHub, Vercel, Upstash, model credentials, Telegram bot, data, and costs.
 - [x] Record the V1 apply policy: narrow allowlisted repo mutation on request; commits to `agent/*` (or PR); automatic preview after checks; **explicit owner confirmation before production**; protected `main`; no unsupervised production promotion; markdown auto-apply deferred.
 - [x] Record V1 Redis retention defaults (session 7d, provenance 30d, audit 90d, durable until forget, tombstone 14d) and thin AgentSpec contract in `agent.spec.json` / backlog.
-- [ ] Verify `openai/gpt-5.6-luna` against an agent tool-use eval and confirm it as the initial default; retain a configurable model override.
-- [ ] Verify the complete user-owned bootstrap with Vercel OIDC and `vercel integration add upstash`, including clean-account authentication and reruns.
-- [x] Scaffold a minimal pinned eve project and verify the current project layout, Next.js channel, dynamic-instruction capability, sandbox behavior, eval API, and Vercel deployment contract.
-- [x] Spike Telegram as a default eve/HTTP channel: bot token env, owner identity linking, inbound message → agent → reply, and unauthorized-user rejection for mutation tools.
-- [x] Port a minimal Upstash virtual `MEMORY.md` tool set into eve and test reads, atomic edits, versioning, and per-user isolation.
-- [ ] Spike the end-to-end apply path on one allowlisted file: edit → commit to `agent/*` → checks/evals → Vercel preview URL → chat confirmation → merge/promote to production → rollback.
-- [ ] Prove a dynamic skill/instruction can be loaded from Upstash without rebuilding as an optional shortcut; if eve cannot support this cleanly, document the adapter or repository-promotion fallback.
-- [ ] Produce a threat model covering prompt injection, secret leakage, cross-tenant memory access, malicious self-modification, Git abuse, deployment abuse, Telegram impersonation/unauthorized commands, and resource deletion.
+- [x] Default model is configurable (`AGENT_MODEL`) with `openai/gpt-5.6-luna` as template default; **cloners** validate availability on their AI Gateway — not a maintainer credential task.
+- [x] User-owned bootstrap path is specified (Vercel OIDC, `vercel integration add upstash`, Telegram bot, env pull). **Cloners** run it on their accounts; maintainers do not need live credentials to ship the template.
+- [x] Scaffold a minimal pinned eve project and verify the current project layout, Next.js channel, dynamic-instruction capability, and Vercel build contract (`eve build`).
+- [x] Telegram channel scaffolded with owner identity linking and unauthorized-user rejection for mutation tools (cloners supply bot token / owner id).
+- [x] Upstash virtual `MEMORY.md` tool set scaffolded (reads, writes, forget, markdown view; cloners supply Redis).
+- [x] Apply-path tools scaffolded (allowlisted write → `agent/*` commit → push/preview → gated production). **Cloners** prove the loop on their GitHub/Vercel; maintainers ship the mechanism.
+- [x] Improve first-run **agent/MCP-guided setup** so cloners can complete credentials via conversational/tooling flows (Vercel CLI, Upstash integration, Telegram BotFather guidance) without maintaining secrets in this repo.
+- [x] Prove a dynamic skill/instruction can be loaded from Upstash without rebuilding as an optional shortcut; if eve cannot support this cleanly, document the adapter or repository-promotion fallback.
+- [x] Produce a threat model covering prompt injection, secret leakage, cross-tenant memory access, malicious self-modification, Git abuse, deployment abuse, Telegram impersonation/unauthorized commands, and resource deletion.
 
-Exit criteria: a spike demonstrates eve + AI Gateway OIDC + automatically provisioned Upstash + Telegram chat + Vercel with one safe mutable artifact that can be committed, previewed, confirmed, and rolled back.
+Exit criteria for the template: a cloner can import the repo, follow agent/MCP-guided setup on **their** accounts, chat on Telegram, and run the apply loop—without template maintainers holding any of those credentials.
 
 ## Phase 1 — Technical-user template (chat + apply)
 

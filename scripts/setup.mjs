@@ -1,30 +1,23 @@
 #!/usr/bin/env node
 /**
  * Idempotent setup helper for the self-modifying agent template.
- * Guides Vercel auth/link, Upstash env presence, Telegram owner linking, and smoke checks.
+ * Diagnoses cloner-owned credentials; never prints secret values.
+ * Use --json for coding agents / MCP automation.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { spawnSync } from "node:child_process";
-import { resolve } from "node:path";
+import { resolve, dirname } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
 
-const root = resolve(import.meta.dirname, "..");
+const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const jsonMode = process.argv.includes("--json");
 
 function log(msg) {
-  console.log(`› ${msg}`);
+  if (!jsonMode) console.log(`› ${msg}`);
 }
 
 function warn(msg) {
-  console.warn(`! ${msg}`);
-}
-
-function hasEnv(name) {
-  if (process.env[name]) return true;
-  for (const file of [".env.local", ".env"]) {
-    const path = resolve(root, file);
-    if (!existsSync(path)) continue;
-    if (new RegExp(`^${name}=.+`, "m").test(readFileSync(path, "utf8"))) return true;
-  }
-  return false;
+  if (!jsonMode) console.warn(`! ${msg}`);
 }
 
 function ensureEnvExampleCopied() {
@@ -36,64 +29,58 @@ function ensureEnvExampleCopied() {
   }
 }
 
-function run(cmd, args, opts = {}) {
+function run(cmd, args) {
   log(`${cmd} ${args.join(" ")}`);
   const result = spawnSync(cmd, args, {
     cwd: root,
-    stdio: "inherit",
+    stdio: jsonMode ? "pipe" : "inherit",
     shell: false,
-    ...opts,
   });
   return result.status === 0;
 }
 
 ensureEnvExampleCopied();
 
-log("Checking Node engine (24.x recommended)...");
-const major = Number(process.versions.node.split(".")[0]);
-if (major < 24) warn(`Node ${process.versions.node} detected; package engines ask for 24.x`);
+const setupStatusUrl = pathToFileURL(resolve(root, "agent/lib/setup-status.ts")).href;
+const { setupReport } = await import(setupStatusUrl);
+const report = setupReport();
 
-if (!hasEnv("UPSTASH_REDIS_REST_URL") || !hasEnv("UPSTASH_REDIS_REST_TOKEN")) {
-  warn("Upstash Redis env vars missing.");
-  log("After `vercel link`, prefer: vercel integration add upstash && vercel env pull");
+if (jsonMode) {
+  console.log(JSON.stringify(report, null, 2));
 } else {
-  log("Upstash Redis env vars present.");
+  for (const check of report.checks) {
+    if (check.ok) log(`${check.id}: ${check.summary}`);
+    else warn(`${check.id}: ${check.summary}`);
+    for (const action of check.nextActions) log(`  → ${action}`);
+  }
+  log(report.guidance);
+  for (const hint of report.mcpHints) log(hint);
 }
 
-if (!hasEnv("TELEGRAM_BOT_TOKEN")) {
-  warn("TELEGRAM_BOT_TOKEN missing. Create a bot with BotFather and paste the token into .env.local");
-} else {
-  log("Telegram bot token present.");
+if (!jsonMode) {
+  log("Running typecheck...");
+  if (!run("npm", ["run", "typecheck"])) {
+    process.exitCode = 1;
+    warn("Typecheck failed.");
+  } else {
+    log("Typecheck ok.");
+  }
+
+  log("Running unit tests...");
+  if (!run("npm", ["test"])) {
+    process.exitCode = 1;
+    warn("Tests failed.");
+  } else {
+    log("Tests ok.");
+  }
 }
 
-if (!hasEnv("TELEGRAM_OWNER_USER_ID")) {
-  warn("TELEGRAM_OWNER_USER_ID missing. Message @userinfobot and set your numeric id.");
-} else {
-  log("Telegram owner id present.");
+if (!report.ready) {
+  process.exitCode = process.exitCode || 1;
 }
 
-if (!existsSync(resolve(root, ".vercel/project.json"))) {
-  warn("Vercel project not linked yet.");
-  log("Run: npx vercel login && npx vercel link");
-  log("Then: npx vercel integration add upstash && npx vercel env pull .env.local");
-} else {
-  log("Vercel project link detected.");
+if (!jsonMode) {
+  log(
+    "Setup finished diagnosing. Complete missing nextActions on your accounts (or via a coding agent/MCP), then deploy and register the Telegram webhook.",
+  );
 }
-
-log("Running typecheck...");
-if (!run("npm", ["run", "typecheck"])) {
-  process.exitCode = 1;
-  warn("Typecheck failed.");
-} else {
-  log("Typecheck ok.");
-}
-
-log("Running unit tests...");
-if (!run("npm", ["test"])) {
-  process.exitCode = 1;
-  warn("Tests failed.");
-} else {
-  log("Tests ok.");
-}
-
-log("Setup finished. Next: npm run dev:eve  (TUI) or deploy and set Telegram webhook to /eve/v1/telegram");

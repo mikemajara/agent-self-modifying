@@ -159,34 +159,33 @@ Production code is never edited in place on the immutable Vercel filesystem. Dur
 
 ## V1 Creation and Interaction Experience
 
-The technical user can:
+The technical user (cloner) can:
 
-- Create or import a project from a GitHub template.
-- Run one setup command or guided CLI.
-- Authenticate with Vercel through its browser/device flow.
-- Automatically provision and connect their own Upstash Redis database through the Vercel integration.
-- Pull Vercel environment variables and the AI Gateway OIDC token without asking for provider API keys.
-- Configure a Telegram bot token and link the owner's Telegram identity for authorization.
+- Create or import a project from a GitHub template into **their** GitHub account.
+- Complete setup with a coding agent / MCP tools and/or `npm run setup` — **they** create and own all credentials; this template never ships secrets.
+- Authenticate with Vercel through its browser/device flow on their account.
+- Automatically provision and connect **their** Upstash Redis database through the Vercel integration.
+- Pull Vercel environment variables and the AI Gateway OIDC token without pasting provider API keys into the agent chat.
+- Configure **their** Telegram bot token and link their Telegram identity for authorization.
 - Chat with the agent on Telegram (default), web chat, or eve terminal UI.
 - Ask the agent to modify itself and receive commit links, preview URLs, and a production-confirm prompt in the same chat.
-- Understand required permissions from the README and setup checks.
 
 The expected happy path is:
 
 ```text
-GitHub template → user's repository → user's Vercel project
-  → browser authentication → provision Upstash → pull OIDC/env
-  → configure Telegram bot → verify requirements
-  → chat on Telegram → "change yourself…" → commit + preview
-  → owner confirms → production deploy
+GitHub template → cloner's repository → cloner's Vercel project
+  → agent/MCP-guided setup (login, link, Upstash, Telegram)
+  → pull OIDC/env → deploy → chat on Telegram
+  → "change yourself…" → commit + preview → owner confirms → production
 ```
 
-The template provides both:
+The template provides:
 
-- A deterministic bootstrap script for prerequisite checks, authentication, linking, provisioning, environment synchronization, Telegram channel setup, schema initialization, and smoke tests.
-- First-run agent instructions that detect missing setup, explain what will happen, and invoke or direct the same script rather than implementing a second setup path conversationally.
+- A deterministic bootstrap script for prerequisite checks and smoke tests (does not invent cloud credentials).
+- First-run agent instructions that detect missing setup and prefer **agent/MCP-guided** completion of official CLIs/integrations over asking the user to paste secrets into chat.
+- Docs that make clear: maintainers do not acquire cloners' credentials.
 
-The script should use current supported CLI operations such as `vercel login`, `vercel link`, `vercel integration add upstash`, and `vercel env pull`. Setup remains resumable and safe to rerun.
+The script / agent should use current supported CLI operations such as `vercel login`, `vercel link`, `vercel integration add upstash`, and `vercel env pull`. Setup remains resumable and safe to rerun.
 
 ## V2 Product Boundary
 

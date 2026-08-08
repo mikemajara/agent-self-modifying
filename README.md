@@ -1,30 +1,33 @@
 # Self-modifying agent template
 
-User-owned [eve](https://eve.dev) agent you can chat with on **Telegram** (default), web chat, or the eve TUI. It remembers durable facts in **Upstash Redis**, and when you ask it to change itself it edits allowlisted files, commits to an `agent/*` branch, opens a **Vercel preview**, and promotes **production** only after you confirm.
+User-owned [eve](https://eve.dev) agent template. **You** clone it, connect **your** GitHub / Vercel / Upstash / Telegram / model access, deploy, then chat. The agent remembers durable facts and, when you ask, can edit allowlisted files, commit to an `agent/*` branch, open a Vercel preview, and promote production after you confirm.
 
-## Quick start
+This repository does **not** ship credentials. Empty env placeholders only.
+
+## Quick start (you own the accounts)
 
 ```bash
 npm install
 cp .env.example .env.local
-npm run setup
-npm run dev:eve
+npm run setup          # checks what's missing; does not create cloud resources for you
+npm run dev:eve        # or ask a coding agent / MCP to walk setup
 ```
 
-### Telegram
+Preferred path: ask an AI coding agent (or MCP-backed tools) to complete setup against **your** logins:
 
-1. Create a bot with BotFather; set `TELEGRAM_BOT_TOKEN`, `TELEGRAM_BOT_USERNAME`, `TELEGRAM_WEBHOOK_SECRET_TOKEN`, `TELEGRAM_OWNER_USER_ID`.
-2. Deploy to Vercel, then:
+1. `vercel login` → `vercel link`
+2. Provision Upstash via Vercel integration → `vercel env pull`
+3. Create a Telegram bot (BotFather) → set token, webhook secret, and your `TELEGRAM_OWNER_USER_ID`
+4. Deploy → register Telegram webhook to `/eve/v1/telegram`
+5. Chat and try a self-mod
+
+### Telegram webhook (after deploy)
 
 ```bash
 curl -X POST "https://api.telegram.org/bot$TELEGRAM_BOT_TOKEN/setWebhook" \
   -H "Content-Type: application/json" \
   -d '{"url":"https://YOUR_DOMAIN/eve/v1/telegram","secret_token":"'"$TELEGRAM_WEBHOOK_SECRET_TOKEN"'","allowed_updates":["message","callback_query"]}'
 ```
-
-### Memory + Vercel
-
-Prefer linking Vercel and provisioning Upstash via the Vercel integration, then `vercel env pull`.
 
 ## Apply loop
 
@@ -38,17 +41,20 @@ ask in chat → write allowlisted files → commit on agent/* → push + preview
 
 See `agent.spec.json` for the versioned AgentSpec (identity, model, channels, memory retention, mutation policy).
 
+## Docs
+
+- Product intent / plan: `.backlog/`
+- Security: [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md)
+- Level-2 overlay: [`docs/DYNAMIC-INSTRUCTIONS.md`](docs/DYNAMIC-INSTRUCTIONS.md)
+
 ## Scripts
 
 | Script | Purpose |
 | --- | --- |
 | `npm run setup` | Env checks, typecheck, tests |
+| `npm run setup:json` | Machine-readable setup diagnosis for agents/MCP |
 | `npm run dev:eve` | Local eve server + TUI |
 | `npm run dev` | Next.js web chat |
 | `npm run typecheck` | TypeScript |
 | `npm test` | Unit tests |
 | `npm run build:eve` | eve production build |
-
-## Docs / backlog
-
-Product intent and phased plan live in `.backlog/`.
