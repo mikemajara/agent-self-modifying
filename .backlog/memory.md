@@ -2,6 +2,8 @@
 
 ## Decisions
 
+- **Distribution direction:** use a hybrid of a thin starter, versioned eve extensions for centrally maintained behavior, and shadcn-compatible eve registry items for source users copy and own. Template-created repositories have no automatic upstream relationship; `.agent-template.json` records provenance for future three-way migrations. Keep packages private/workspace-local until extraction and migration tests stabilize. See `docs/DISTRIBUTION-AND-UPDATES.md`.
+
 - Use Vercel eve as the default agent runtime and Vercel as the deployment target.
 - Use Upstash Redis for durable memory that survives sessions and deployments.
 - **V1 product spine is apply-on-request, not proposal-only:** the owner asks in chat; the agent edits allowlisted files, commits, opens a preview, and promotes production after explicit confirmation.

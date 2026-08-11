@@ -25,6 +25,17 @@ The button creates a repository in your Git provider and imports it as a Vercel 
 
 You can also use GitHub's **Use this template** button or clone the repository manually:
 
+For a fresh local project, run the initializer directly from GitHub (inspect the [script](scripts/create-agent.sh) first if desired):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/mikemajara/agent-self-modifying/main/scripts/create-agent.sh \
+  | bash -s -- my-agent
+```
+
+Pin a tag or branch with `--ref <git-ref>`, or skip dependency installation with `--skip-install`. This route does not require publishing anything to npm.
+
+Alternatively, clone the repository manually:
+
 ```bash
 git clone https://github.com/mikemajara/agent-self-modifying.git
 cd agent-self-modifying
@@ -81,6 +92,7 @@ See `agent.spec.json` for the versioned AgentSpec (identity, model, channels, me
 - Product intent / plan: `.backlog/`
 - Security: [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md)
 - Level-2 overlay: [`docs/DYNAMIC-INSTRUCTIONS.md`](docs/DYNAMIC-INSTRUCTIONS.md)
+- Distribution, ownership, and updates: [`docs/DISTRIBUTION-AND-UPDATES.md`](docs/DISTRIBUTION-AND-UPDATES.md)
 
 ## Scripts
 
