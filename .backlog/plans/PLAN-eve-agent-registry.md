@@ -20,11 +20,11 @@ Replace template/bootstrap distribution with a GitHub-hosted eve source registry
 - [x] Add a source `registry.json` and the first differentiated registry-owned files.
 - [x] Validate and build the source registry.
 - [x] Install the built item into a clean local eve fixture without publishing.
-- [ ] Verify discovery, typecheck, and eve build in the fixture. (Typecheck passes; clean `eve build` is blocked by eve 0.31.3's generated `anthropic/claude-sonnet-5` lacking context-window metadata.)
+- [x] Verify discovery, typecheck, and eve build in the fixture. (The raw-installed consumer exposed its capabilities locally and built successfully on Vercel after setting the consumer's framework preset to Eve and providing explicit model context metadata.)
 - [x] Test reinstall/update behavior after a local edit.
 - [x] Remove legacy initializer, template setup, Deploy Button, and template-oriented docs/code.
 - [ ] Add registry validation and install/update fixtures to CI.
-- [ ] Disable GitHub template mode after the complete local suite passes.
+- [x] Disable GitHub template mode after the complete local suite passes.
 
 ## Verification
 
@@ -43,6 +43,6 @@ Replace template/bootstrap distribution with a GitHub-hosted eve source registry
 
 ## Notes
 
-Do not push the pivot or change GitHub settings until the remaining clean-build blocker is resolved or explicitly accepted as an upstream eve scaffold issue.
+The pivot was pushed as `307a060`; GitHub template mode is disabled. The remaining work is CI automation, Telegram lifecycle helpers, and the separate authentication research task.
 
 Observed: eve 0.31.3 installs official dependencies transitively but does not run their declared setup flows from a third-party parent item. Keep provider/team selection explicit and track upstream support; do not restore the custom setup wizard.
