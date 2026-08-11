@@ -38,7 +38,7 @@ The registry composes official eve integrations wherever possible and owns only 
 ### What eve or upstream integrations own
 
 - The eve runtime and project initialization.
-- Web chat.
+- Web chat, when the user adds Eve's official Web channel.
 - Upstash AgentKit memory.
 - Scoped GitHub capabilities.
 - Vercel connection and its authorization primitive.
@@ -69,14 +69,14 @@ Every release must state its minimum eve version and classify changes as compati
 
 - Root `registry.json` is a valid shadcn source registry consumable by eve.
 - `self-modifying-agent` installs into a clean eve project with one `eve add` command.
-- The item composes official `channel/web`, `extension/upstash-agentkit`, `extension/github-tools`, and `connection/vercel` items rather than copying them.
+- The item composes official `extension/upstash-agentkit`, `extension/github-tools`, and `connection/vercel` items rather than copying them; Web is an explicit optional Eve channel add-on.
 - Telegram rejects missing, unknown, and non-owner identities before a model turn receives mutation capabilities.
 - Installed source contains no repository-local imports or hidden dependency on this publisher app.
 - Provider setup remains explicit until eve supports transitive setup flows for third-party parent items; the integration must never guess account or team selection.
 - Reinstall/update never silently overwrites user-owned files.
 - Registry validation, build, clean-install, update-with-local-edit, and compatibility tests run in CI.
 - The repository is not marketed or configured as a GitHub template and exposes no custom bootstrap script or Deploy Button.
-- Channels are optional sibling registry items; the core self-modification item does not force Telegram or Slack.
+- UI and channels are optional sibling integrations; the core self-modification item does not force Web, Telegram, or Slack.
 - Cross-channel memory uses a verified canonical owner identity and fails closed when a channel identity has not been linked.
 
 ## Acceptance criteria

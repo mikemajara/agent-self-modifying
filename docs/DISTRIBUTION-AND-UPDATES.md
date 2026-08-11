@@ -4,7 +4,7 @@
 
 Distribute this capability as an eve registry item. Do not distribute it as a GitHub template, Deploy Button, curl-to-bash initializer, `npx create` package, or cloned starter.
 
-The user begins with an ordinary eve project and adds this integration with `eve add`. The core item composes official eve integrations and copies the governed self-modification source into the user's repository. Channels are separate items so a user can choose Telegram, Slack, or no external chat surface.
+The user begins with an ordinary eve project and adds this integration with `eve add`. The core item composes official eve capabilities and copies the governed self-modification source into the user's repository. UI and external channels are separate items so a user can choose Eve Web, Telegram, Slack, or no additional surface.
 
 ## Why this boundary
 
@@ -27,7 +27,7 @@ Eve 0.31.3 accepts third-party registry items by HTTP(S) URL. For unpublished de
 
 A clean-install smoke test confirmed that the item:
 
-- resolves the official Web, Upstash AgentKit, GitHub Tools, and Vercel dependencies;
+- resolves the official Upstash AgentKit, GitHub Tools, and Vercel dependencies;
 - creates the custom Telegram, instruction, and skill files;
 - declares the expected environment variables; and
 - passes TypeScript checking in a clean eve project.
@@ -47,6 +47,8 @@ Every release should include generated registry JSON and a concise change classi
 - **Security release:** state affected files and safe manual remediation for locally diverged installations.
 
 The registry must not silently overwrite files, merge identities, choose a GitHub/Vercel team, alter protected branches, or promote production.
+
+The Web UI is intentionally not a transitive dependency of the core item. Add Eve's official Web item directly (or initialize with `eve init --channel-web-nextjs`) so Eve runs its setup flow and patches the consuming project's Next.js scripts.
 
 ## Shared identity and memory
 

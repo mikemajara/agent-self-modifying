@@ -4,7 +4,6 @@
   "title": "Governed self-modifying eve agent",
   "description": "Add durable memory, scoped GitHub and Vercel capabilities, and a preview-first self-modification policy to an existing eve agent.",
   "registryDependencies": [
-    "https://eve.dev/r/channel/web.json",
     "https://eve.dev/r/extension/upstash-agentkit.json",
     "https://eve.dev/r/extension/github-tools.json",
     "https://eve.dev/r/connection/vercel.json"

@@ -6,13 +6,12 @@ This repository is the registry source and its development fixture. It is not an
 
 ## Main agent features
 
-- Web chat through eve's official web channel.
 - Durable Upstash AgentKit memory.
 - Scoped GitHub tools and a Vercel MCP connection from official eve integrations.
 - A governed `agent/*` branch → checks → preview → owner-confirmed production workflow.
 - Explicit safety instructions for mutation boundaries, secrets, approvals, and rollback.
 - Copy-owned source: local customization is preserved unless the user deliberately requests overwrite.
-- Optional channels: Telegram, Slack, and future surfaces are installed separately from the core capability.
+- Optional surfaces: Eve Web, Telegram, Slack, and future channels are installed separately from the core capability.
 
 ## Install
 
@@ -24,13 +23,29 @@ cd my-agent
 npx eve add https://raw.githubusercontent.com/mikemajara/agent-self-modifying/main/public/r/self-modifying-agent.json
 ```
 
-The core item composes the official eve Web, Upstash AgentKit, GitHub Tools, and Vercel connection items, then adds this project's self-modification policy files.
+The core item composes Upstash AgentKit, GitHub Tools, and the Vercel connection, then adds this project's self-modification policy files. It intentionally does not install a UI or an external chat channel.
 
 Today, Eve installs their code, packages, and environment declarations transitively, but Eve 0.31.3 does not run official provider setup flows through a third-party parent item. Account login, Vercel team/project selection, and Telegram bot creation therefore remain explicit provider/eve steps after installation. We should remove that caveat only when Eve supports transitive third-party setup flows.
 
 The raw GitHub URL becomes usable after these generated artifacts are merged to `main`. During registry development, use the local loop below.
 
 ## Optional channels
+
+For a new project, add Eve's official Next.js web UI during initialization:
+
+```bash
+npx eve init my-agent --channel-web-nextjs
+cd my-agent
+npx eve add https://raw.githubusercontent.com/mikemajara/agent-self-modifying/main/public/r/self-modifying-agent.json
+```
+
+For an existing plain Eve project, use Eve's official Web item directly:
+
+```bash
+npx eve add channel/web
+```
+
+The direct Web add runs Eve's channel setup, adds the `app/` UI and `withEve` integration, and configures the Next.js `dev` and `build` scripts. Installing only the self-modifying item intentionally leaves the plain Eve API/TUI surface in place. If your Eve/package-manager version reports a dependency conflict while adding Web, use the fresh-project init command above; it installs Web and the self-modifying capability in a known-good order.
 
 Telegram is deliberately not bundled with the core agent. Install the owner-gated Telegram item only when Telegram is wanted:
 
