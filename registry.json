@@ -1,0 +1,67 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "self-modifying-agents",
+  "homepage": "https://github.com/mikemajara/agent-self-modifying",
+  "items": [
+    {
+      "name": "self-modifying-agent",
+      "type": "registry:item",
+      "title": "Governed self-modifying eve agent",
+      "description": "Add durable memory, scoped GitHub and Vercel capabilities, and a preview-first self-modification policy to an existing eve agent.",
+      "registryDependencies": [
+        "https://eve.dev/r/channel/web.json",
+        "https://eve.dev/r/extension/upstash-agentkit.json",
+        "https://eve.dev/r/extension/github-tools.json",
+        "https://eve.dev/r/connection/vercel.json"
+      ],
+      "files": [
+        {
+          "path": "registry/self-modifying-agent/instructions.md",
+          "type": "registry:file",
+          "target": "agent/instructions/self-modifying.md"
+        },
+        {
+          "path": "registry/self-modifying-agent/self-improvement.md",
+          "type": "registry:file",
+          "target": "agent/skills/self-improvement/SKILL.md"
+        },
+        {
+          "path": "registry/self-modifying-agent/safety-policy.md",
+          "type": "registry:file",
+          "target": "agent/skills/safety-policy/SKILL.md"
+        }
+      ],
+      "meta": {
+        "eve": {
+          "requires": ">=0.31.3",
+          "docs": "https://github.com/mikemajara/agent-self-modifying#install"
+        }
+      }
+    },
+    {
+      "name": "channel-telegram-owner",
+      "type": "registry:item",
+      "title": "Owner-gated Telegram channel for eve",
+      "description": "Add an optional, single-owner Telegram channel to an eve agent. Telegram lifecycle commands belong here rather than in the core self-modification item.",
+      "envVars": {
+        "TELEGRAM_BOT_TOKEN": "",
+        "TELEGRAM_BOT_USERNAME": "",
+        "TELEGRAM_WEBHOOK_SECRET_TOKEN": "",
+        "TELEGRAM_OWNER_USER_ID": ""
+      },
+      "files": [
+        {
+          "path": "registry/channel-telegram-owner/telegram.ts",
+          "type": "registry:file",
+          "target": "agent/channels/telegram.ts"
+        }
+      ],
+      "meta": {
+        "eve": {
+          "requires": ">=0.31.3",
+          "docs": "https://github.com/mikemajara/agent-self-modifying#optional-channels"
+        }
+      }
+    }
+  ]
+}

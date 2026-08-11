@@ -1,6 +1,6 @@
-# Threat model — self-modifying agent template
+# Threat model — self-modifying eve integration
 
-Scope: V1 template (eve + Telegram + Upstash + allowlisted Git/Vercel apply loop).  
+Scope: V1 registry integration (eve + Telegram + Upstash + allowlisted Git/Vercel apply loop).
 Assumption: cloners own all cloud credentials; this repo ships no secrets.
 
 ## Assets

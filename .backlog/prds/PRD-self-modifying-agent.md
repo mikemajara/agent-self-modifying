@@ -1,13 +1,15 @@
 ---
 slug: self-modifying-agent
 title: User-owned self-modifying agent template
-status: draft
+status: done
 issue:
 created_at: 2026-08-07T00:00:00+02:00
 updated_at: 2026-08-08T17:30:00+02:00
 ---
 
-# User-owned self-modifying agent template
+# Superseded: user-owned self-modifying agent template
+
+Superseded by `.backlog/prds/PRD-eve-agent-registry.md`. This file is retained temporarily as historical product research; it is no longer an implementation contract.
 
 ## Problem
 

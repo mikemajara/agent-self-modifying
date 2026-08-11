@@ -1,88 +1,70 @@
 # Distribution and updates
 
-## Recommendation
+## Decision
 
-Use a hybrid distribution model rather than choosing between a monolithic template and a single extension:
+Distribute this capability as an eve registry item. Do not distribute it as a GitHub template, Deploy Button, curl-to-bash initializer, `npx create` package, or cloned starter.
 
-1. Keep a thin starter project for the deployable application shell, channel mounts, web UI, environment contract, and infrastructure-specific configuration.
-2. Move reusable, centrally maintained capabilities into one or more versioned eve extensions.
-3. Publish user-owned skills, instructions, and optional channel/config scaffolds through an eve integration registry, which uses the shadcn registry format.
+The user begins with an ordinary eve project and adds this integration with `eve add`. The core item composes official eve integrations and copies the governed self-modification source into the user's repository. Channels are separate items so a user can choose Telegram, Slack, or no external chat surface.
 
-This preserves the useful part of the current template—the user owns a normal repository—while creating an explicit path for upstream fixes.
+## Why this boundary
 
-## What happens with the template today
+An independent template has no durable upstream relationship. Every generated repository immediately becomes a fork that needs bespoke migrations. A monolithic runtime extension has the opposite problem: it hides behavior that users should be able to inspect and customize.
 
-A repository created with GitHub's **Use this template** button or `scripts/create-agent.sh` is an independent repository. It does not retain an automatic upstream relationship. Future commits to this repository do not flow into an existing user's agent.
+The registry splits ownership by change type:
 
-The initializer records the exact source, ref, and commit in `.agent-template.json`. That makes provenance visible, but it is not yet an updater. Adopting a later template version currently requires a manual diff, cherry-pick, or migration.
+| Layer | Owner | Update path |
+| --- | --- | --- |
+| eve runtime and official integrations | eve/package publisher | dependency update through the consumer's lockfile |
+| Channel adapters, skills, and policy | consuming user after installation | rerun the relevant `eve add`, review, then optionally overwrite or port changes |
+| Accounts, secrets, deployment, and app-specific configuration | consuming user | explicit local/provider action |
+| Registry manifest and released defaults | this repository | reviewed registry release |
 
-This is safe—nothing changes underneath a user—but becomes expensive as the number of generated agents grows.
+This is the shadcn-style “copy, inspect, and own” contract. No installed source changes underneath a user.
 
-## Three ownership modes
+## Installation behavior verified locally
 
-| Distribution | Update behavior | Ownership model | Best for |
-| --- | --- | --- | --- |
-| Starter/template | No automatic upstream updates | User owns the whole application | Initial app, deployment wiring, UI, channel mounts |
-| eve extension package | Package upgrade updates mounted behavior | Publisher owns defaults; user configures or overrides named contributions | Memory engine, apply policy, audit hooks, reusable tools |
-| eve registry item | Re-run `eve add`; review changes; overwrite only deliberately | Source is copied into the user's repository | Skills, instructions, channel/config scaffolds users are expected to edit |
+Eve 0.31.3 accepts third-party registry items by HTTP(S) URL. For unpublished development, build `public/r` and serve it on localhost; plain filesystem paths are currently interpreted as official-registry item names.
 
-An eve extension can contribute tools, connections, skills, instructions, and hooks. It cannot own the consuming agent's runtime configuration, sandboxes, schedules, or nested extension mounts. Those remain in the starter or are installed as project files by a registry item.
+A clean-install smoke test confirmed that the item:
 
-## Shadcn-style contract
+- resolves the official Web, Upstash AgentKit, GitHub Tools, and Vercel dependencies;
+- creates the custom Telegram, instruction, and skill files;
+- declares the expected environment variables; and
+- passes TypeScript checking in a clean eve project.
 
-The desired contract is “copy, inspect, and own”:
+Reinstalling without `--overwrite` skipped existing files and preserved an intentional local edit. This is the default update behavior we want.
 
-- Installing a registry item writes readable source files into the user's agent.
-- The generated code is ordinary project code, not a hidden runtime dependency.
-- Re-running `eve add <item>` fetches a newer scaffold.
-- Existing files are not silently replaced; `--overwrite` is an explicit choice.
-- Users can keep their fork forever, selectively port upstream changes, or accept a replacement after reviewing the diff.
+Eve 0.31.3 does not execute official dependency setup flows transitively when they are referenced by a third-party parent item. The registry therefore installs environment declarations and integration source, while provider authorization and team/project selection remain explicit follow-up steps. We must not recreate those flows in a custom installer.
 
-For capabilities where upstream security and correctness fixes should be inherited, use an extension package instead. Consumers update its pinned version and can override or disable individual tools and skills under `agent/extensions/<mount>/`.
+## Update policy
 
-## Example: shared identity and memory
+Every release should include generated registry JSON and a concise change classification:
 
-Shared memory across Telegram and web requires a stable authenticated principal that maps both interfaces to the same user. It should not be implemented as a template-wide copy of channel-specific identifiers.
+- **Package-only:** update upstream package versions through the consuming package manager.
+- **Copied-source update:** rerun `eve add`, inspect the released source/diff, and decide whether to port or overwrite.
+- **Configuration migration:** document the environment or mount change; never infer account or team selection.
+- **Data migration:** back up, preview, run idempotently, and record completion before production.
+- **Security release:** state affected files and safe manual remediation for locally diverged installations.
 
-A sensible split is:
+The registry must not silently overwrite files, merge identities, choose a GitHub/Vercel team, alter protected branches, or promote production.
 
-- Extension: memory storage, namespacing, identity-link records, audit hooks, and memory tools.
-- Registry-installed/project code: Telegram and web authentication adapters that resolve channel credentials to the extension's canonical principal.
-- Starter: route protection, environment variables, deployment configuration, and the UI used to link identities.
+## Shared identity and memory
 
-An existing agent could adopt this by upgrading the memory extension, installing the new auth adapter scaffold, configuring its environment, running migrations and evals, and deploying a preview. A migration must never silently merge two identities or memory namespaces.
+Shared memory across Telegram and web requires a stable authenticated principal that maps both interfaces to one owner. Storage and identity primitives belong in a maintained extension; channel-specific authentication adapters remain inspectable registry-installed source.
 
-## Version and migration policy
+Upstash AgentKit defaults `userId` to `auth.current.principalId`, then the initiator principal, then the Eve session id. Default Telegram, Slack, web, and TUI principals therefore produce separate memory namespaces. Sharing one Redis database or one extension mount is not sufficient.
 
-Every generated project should retain:
+For the single-owner case, each channel adapter must authenticate its external user and project it to a canonical internal owner identity. The memory resolver consumes only that verified identity and fails closed when it is absent. Long-term memories and searchable chat history may then span surfaces, while live session history stays separate. Never set one global memory id while allowing untrusted callers onto any channel: that would expose the owner's memory to them.
 
-- Template provenance in `.agent-template.json`.
-- The resolved AgentSpec and its `templateVersion`.
-- Exact extension versions in the package lockfile.
-- A migration ledger recording completed data/config migrations.
+An adoption flow should therefore be: update the extension, install/review the adapter change, configure identity linking, run an idempotent migration and evals, inspect a preview, then explicitly promote. Two identities or memory namespaces must never be silently merged.
 
-Release changes should be classified as:
+## Development and release
 
-- **Extension-only:** dependency bump; review release notes and overrides.
-- **Registry file update:** re-run `eve add`, inspect the diff, choose whether to keep local code or overwrite.
-- **Starter migration:** apply a documented codemod or patch; never silently rewrite the repository.
-- **Data migration:** preview, back up, run idempotently, and record completion before production promotion.
+1. Edit `registry.json` and `registry/self-modifying-agent/**`.
+2. Validate and build with the shadcn registry CLI.
+3. Serve `public/r` on localhost and install the item into a clean eve project by URL.
+4. Typecheck, run evals, test cancellation/resume, and verify reinstall preserves a local edit.
+5. Commit both source and generated JSON.
+6. After merge, consumers install from the stable hosted/raw URL.
 
-The future updater should compare the recorded template commit with a selected release and perform a three-way analysis:
-
-```text
-installed base → user's current files → new released base
-```
-
-It should auto-apply only non-conflicting changes, emit conflicts for owned files, run checks/evals, and create a normal preview branch. Production remains owner-confirmed.
-
-## Proposed extraction sequence
-
-1. Keep the current repository as the reference application until the complete apply path works end to end.
-2. Extract memory and identity primitives into a private workspace eve extension first.
-3. Extract the governed apply/audit capabilities after their credential boundary works in production.
-4. Build a small eve registry containing editable skills, instructions, and adapter scaffolds.
-5. Test a clean eve project using `eve add` plus extension mounts; compare that experience with the full starter.
-6. Publish packages only after the workspace contract and migration tests stabilize.
-
-This avoids prematurely publishing npm packages while still testing the final architecture locally through workspace dependencies and a locally served registry.
+The repository can later gain a custom registry domain or catalog, but that is a transport/discovery improvement—not a change to the ownership model.

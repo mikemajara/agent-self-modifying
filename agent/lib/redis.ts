@@ -10,7 +10,7 @@ export function getRedis(): Redis {
   if (client) return client;
   if (!hasRedisConfig()) {
     throw new Error(
-      "Upstash Redis is not configured. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN (run npm run setup).",
+      "Upstash Redis is not configured. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN through your eve/Vercel setup flow.",
     );
   }
   client = Redis.fromEnv();

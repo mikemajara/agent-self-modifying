@@ -4,7 +4,7 @@ Raw ideas not yet promoted to GitHub Issues.
 
 ## Inbox
 
-- [ ] [feat] [high] **Extract an eve agent kit**. Split inherited capabilities into workspace eve extensions and copy-owned skills/adapters into a shadcn-compatible eve registry; validate installation and upgrades from a clean eve agent before publishing packages.
+- [ ] [feat] [medium] **Research db-less authentication**. Compare Better Auth magic links, stateless cookie sessions, Upstash-backed secondary storage, and OAuth/OIDC for shared owner identity without adding a database backend.
 
 - [x] [feat] [high] **Agent/MCP-guided first-run setup**. Detect missing Vercel/Upstash/Telegram/model config and walk the cloner through official CLIs/integrations (and MCP tools when available) without pasting secrets into model context or requiring template-maintainer credentials.
 - [ ] [feat] [medium] **Platform-owned agent creator**. Build a separate web application that consumes a released template and owns provisioning, billing, isolation, lifecycle, and export for non-technical users.

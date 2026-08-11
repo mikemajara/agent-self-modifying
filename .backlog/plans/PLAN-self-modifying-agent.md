@@ -1,13 +1,15 @@
 ---
 slug: self-modifying-agent
-status: draft
+status: done
 issue:
 prd: .backlog/prds/PRD-self-modifying-agent.md
 created_at: 2026-08-07T00:00:00+02:00
 updated_at: 2026-08-08T17:30:00+02:00
 ---
 
-# Plan: User-owned self-modifying agent template
+# Superseded plan: User-owned self-modifying agent template
+
+Superseded by `.backlog/plans/PLAN-eve-agent-registry.md`. Do not execute the template/bootstrap tasks below.
 
 ## Summary
 

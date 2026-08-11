@@ -2,24 +2,26 @@
 
 ## Decisions
 
-- **Distribution direction:** use a hybrid of a thin starter, versioned eve extensions for centrally maintained behavior, and shadcn-compatible eve registry items for source users copy and own. Template-created repositories have no automatic upstream relationship; `.agent-template.json` records provenance for future three-way migrations. Keep packages private/workspace-local until extraction and migration tests stabilize. See `docs/DISTRIBUTION-AND-UPDATES.md`.
+- **Distribution decision (supersedes the template/hybrid direction):** this repository becomes a GitHub-hosted eve source registry. Users start with a normal eve project and install `self-modifying-agent` through `eve add`; the item composes official eve integrations and copies only differentiated owner/auth/policy source. Do not build or market a GitHub template, Deploy Button, curl-to-bash initializer, or `npx create` package. See `.backlog/prds/PRD-eve-agent-registry.md`.
 
 - Use Vercel eve as the default agent runtime and Vercel as the deployment target.
 - Use Upstash Redis for durable memory that survives sessions and deployments.
 - **V1 product spine is apply-on-request, not proposal-only:** the owner asks in chat; the agent edits allowlisted files, commits, opens a preview, and promotes production after explicit confirmation.
 - Treat self-modification as a governed promotion pipeline: memory may update automatically; repository changes require checks, preview, and owner approval before production.
 - **Telegram is the default V1 chat channel** (user-owned bot). Web chat and eve TUI remain available for local/ops use. Platform-owned Telegram *creation* is V2.
-- Build the technical-user template first, then place a hosted creation service in front of the same template.
+- **Channel packaging:** external channels are optional sibling registry items, not dependencies of the core self-modification item. Telegram-specific lifecycle commands belong with the Telegram item; Slack users should never receive Telegram source or environment variables.
+- **Cross-channel memory:** Eve channel principals differ by surface, so AgentKit's default `principalId` scope fragments one person's memory. Normalize only independently authenticated channel identities to a canonical owner id; fail closed for unlinked identities. Never use a global memory id on a channel that admits other callers.
+- Build and validate the technical-user registry integration first; any hosted creator consumes released registry items.
 - V1 is fully user-owned: the user owns the GitHub repository, Vercel project, Upstash database, AI credentials, Telegram bot, data, and resulting costs.
-- V1 works without a control plane: create/import from GitHub, deploy to Vercel, configure Telegram, then chat.
-- V2 is a separate platform-owned product and repository that consumes a released, versioned V1 template.
+- V1 works without a control plane: initialize an eve app, add the registry integration, deploy, configure Telegram, then chat.
+- V2 is a separate platform-owned product and repository that consumes released, versioned registry items.
 - In V2, the platform owns provisioning, billing, tenant isolation, lifecycle management, and export. The web creator is the first surface; Telegram creation follows the stable provisioning API.
 - Generated agents should receive curated eve, Telegram channel, Vercel deployment, Git, memory-management, self-improvement, and safety skills by default.
 - Vercel AI Gateway is required by default; local authentication uses Vercel OIDC rather than provider-specific API keys.
 - Default to `openai/gpt-5.6-luna` because it is inexpensive and explicitly supports reasoning and tool use. Keep the model configurable and verify its availability from AI Gateway during setup.
-- Bootstrap through a deterministic setup script **and** first-run agent/MCP guidance. The **cloner** authenticates Vercel (browser/device login), links the project, provisions Upstash through the Vercel integration, pulls environment variables/OIDC, creates their Telegram bot and owner link, validates eve, and runs a smoke test. Template maintainers do not acquire or store those credentials.
-- **Credential ownership (locked):** GitHub, Vercel, Upstash, AI Gateway/OIDC, Telegram bot token, owner id, and Git deploy tokens are created and paid for by whoever clones/imports the template. This repository ships empty `.env.example` only. “Acquire credentials” is not template-author work and is considered complete as a product decision.
-- Prefer agent- or MCP-assisted setup over manual README copying: first-run instructions should detect missing config and walk the owner through official CLIs/integrations (and MCP tools when available) rather than asking them to paste secrets into chat. Shipped as `setup_status`, `first-run-setup` skill, `01-setup` dynamic instructions, and `npm run setup:json`.
+- Bootstrap through eve integration setup flows and agent/MCP guidance. The **consumer** selects and authenticates the correct provider scope, provisions resources, configures Telegram, validates eve, and runs a smoke test. Registry maintainers do not acquire or store those credentials.
+- **Credential ownership (locked):** GitHub, Vercel, Upstash, AI Gateway/OIDC, Telegram bot token, owner id, and Git deploy tokens are created and paid for by the consuming user. This registry ships empty env declarations only.
+- Prefer eve's integration setup and provider CLIs/MCP over custom setup code. Account and team selection remains interactive and user-owned; secrets never enter agent chat.
 - Level-2 Upstash dynamic instructions overlay is supported (`set_dynamic_instructions` / `manage_dynamic_instructions`); durable shared behavior still goes through the Git apply loop. See `docs/DYNAMIC-INSTRUCTIONS.md`.
 - Threat model for the apply loop lives in `docs/THREAT-MODEL.md`.
 - Git and deploy credentials must never be exposed to the model; use scoped capability tools / GitHub App. Unauthorized Telegram users cannot invoke mutation or deploy tools.

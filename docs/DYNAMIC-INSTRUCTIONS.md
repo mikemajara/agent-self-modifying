@@ -2,7 +2,7 @@
 
 ## What shipped
 
-The template supports a **per-owner dynamic instructions overlay** stored in Upstash Redis:
+The reference implementation supports a **per-owner dynamic instructions overlay** stored in Upstash Redis:
 
 - Written with `set_dynamic_instructions` (owner only)
 - Read/cleared with `manage_dynamic_instructions`
