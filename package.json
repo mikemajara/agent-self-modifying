@@ -12,11 +12,12 @@
     "dev": "next dev",
     "start": "next start",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --experimental-strip-types --test agent/lib/allowlist.test.ts agent/lib/setup-status.test.ts",
+    "test": "node --experimental-strip-types --test agent/lib/allowlist.test.ts agent/lib/setup-status.test.ts scripts/setup-env.test.mjs",
     "build:eve": "eve build",
     "dev:eve": "eve dev",
     "start:eve": "eve start",
     "setup": "node scripts/setup.mjs",
+    "setup:check": "node scripts/setup.mjs --check",
     "setup:json": "node scripts/setup.mjs --json",
     "info": "eve info"
   },

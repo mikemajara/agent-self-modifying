@@ -44,6 +44,8 @@ cp .env.example .env.local
 npm run setup
 ```
 
+In a terminal, `npm run setup` is an interactive and resumable wizard. It can launch the official Vercel login/link and Upstash provisioning prompts, collect the Telegram bot configuration with hidden token entry, generate the webhook secret, and optionally sync Telegram values to the linked Vercel project. Use `npm run setup:check` when you only want diagnostics.
+
 ## Post-deployment setup
 
 The cloner owns and pays for every connected account. Do not paste tokens into agent chat; enter them in Vercel's encrypted environment-variable settings or your local `.env.local`.
@@ -98,7 +100,8 @@ See `agent.spec.json` for the versioned AgentSpec (identity, model, channels, me
 
 | Script | Purpose |
 | --- | --- |
-| `npm run setup` | Env checks, typecheck, tests |
+| `npm run setup` | Resumable interactive Vercel, Upstash, and Telegram setup wizard |
+| `npm run setup:check` | Non-interactive env checks, typecheck, and tests |
 | `npm run setup:json` | Machine-readable setup diagnosis for agents/MCP |
 | `npm run dev:eve` | Local eve server + TUI |
 | `npm run dev` | Next.js web chat |

@@ -67,7 +67,7 @@ export function collectSetupChecks(): SetupCheck[] {
       : [
           "npx vercel login",
           "npx vercel link",
-          "npx vercel integration add upstash",
+          "npx vercel integration add upstash/upstash-kv",
           "npx vercel env pull .env.local",
         ],
   });
