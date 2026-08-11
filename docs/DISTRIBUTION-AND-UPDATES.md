@@ -50,6 +50,14 @@ The registry must not silently overwrite files, merge identities, choose a GitHu
 
 The Web UI is intentionally not a transitive dependency of the core item. Add Eve's official Web item directly (or initialize with `eve init --channel-web-nextjs`) so Eve runs its setup flow and patches the consuming project's Next.js scripts.
 
+The Eve TUI can operate against a deployed consumer without a local agent runtime:
+
+```bash
+eve dev https://your-agent.vercel.app
+```
+
+This is a remote client for the deployment's `/eve/v1/*` routes. Vercel OIDC or Deployment Protection may require `/vc:login`; browser clients need a separate production auth policy. Do not confuse this with `eve dev` run without a URL, which starts a local server and local TUI.
+
 ## Shared identity and memory
 
 Shared memory across Telegram and web requires a stable authenticated principal that maps both interfaces to one owner. Storage and identity primitives belong in a maintained extension; channel-specific authentication adapters remain inspectable registry-installed source.

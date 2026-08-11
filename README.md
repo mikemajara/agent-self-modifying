@@ -29,6 +29,26 @@ Today, Eve installs their code, packages, and environment declarations transitiv
 
 The raw GitHub URL becomes usable after these generated artifacts are merged to `main`. During registry development, use the local loop below.
 
+## Use the TUI with a deployed agent
+
+The TUI can connect to a running Vercel deployment; it does not require a local checkout of that consumer:
+
+```bash
+npx eve dev https://your-agent.vercel.app
+```
+
+This sends sessions through the deployment's `/eve/v1/*` HTTP API. If the deployment is protected, use `/vc:login` inside the TUI when prompted. You can also provide a deployment-protection query parameter or the documented `VERCEL_AUTOMATION_BYPASS_SECRET` when appropriate. A remote TUI session is still subject to the deployed channel's auth policy; Eve's scaffolded `placeholderAuth()` permits setup diagnostics but is not browser authentication for production.
+
+## Disposable verification fixtures
+
+The test consumers created while developing this registry live outside the repository under `/tmp` and are not distribution artifacts:
+
+- `/tmp/eve-web-init-check` — latest Web-enabled consumer; Web was initialized first and the core registry item was added afterward.
+- `/tmp/eve-raw-consumer.wGBqWs/app` — headless raw-registry consumer used for the separate Vercel deployment test (`https://eve-raw-consumer.vercel.app`).
+- `/tmp/eve-channel-split.TLf3cP/app` — earlier channel-split deployment fixture.
+
+These directories are disposable and may disappear when `/tmp` is cleaned. The partially failed `/tmp/eve-web-optional-check` fixture is not a supported example. The repository itself is the registry source; consumers should always be recreated with the commands above.
+
 ## Optional channels
 
 For a new project, add Eve's official Next.js web UI during initialization:
