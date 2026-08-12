@@ -27,7 +27,7 @@ Eve 0.31.3 accepts third-party registry items by HTTP(S) URL. For unpublished de
 
 A clean-install smoke test confirmed that the item:
 
-- resolves the official Upstash AgentKit, GitHub Tools, and Vercel dependencies;
+- resolves the official Upstash AgentKit and Vercel dependencies, plus the official GitHub Tools package;
 - creates the custom Telegram, instruction, and skill files;
 - declares the expected environment variables; and
 - passes TypeScript checking in a clean eve project.
@@ -36,9 +36,11 @@ Reinstalling without `--overwrite` skipped existing files and preserved an inten
 
 Eve 0.31.3 does not execute official dependency setup flows transitively when they are referenced by a third-party parent item. The registry therefore installs environment declarations and integration source, while provider authorization and team/project selection remain explicit follow-up steps. We must not recreate those flows in a custom installer.
 
-In particular, the official GitHub tools item declares `GITHUB_TOKEN` but does not
-provision it. Consumers must configure a narrowly scoped token (or explicitly change
-the mount to a Vercel Connect GitHub connector) in local and deployed environments.
+The GitHub tools mount is Connect-backed by default. Consumers create and attach the
+connector with `vercel connect create github --name self-modifying-agent` and
+`vercel connect attach github/self-modifying-agent --yes`; Vercel owns the GitHub App
+credentials and issues short-lived runtime tokens. A static `GITHUB_TOKEN` is only an
+explicit fallback, not the default setup path.
 
 ## Update policy
 

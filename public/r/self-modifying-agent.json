@@ -3,12 +3,20 @@
   "name": "self-modifying-agent",
   "title": "Governed self-modifying eve agent",
   "description": "Add durable memory, scoped GitHub and Vercel capabilities, and a preview-first self-modification policy to an existing eve agent.",
+  "dependencies": [
+    "@github-tools/eve-extension"
+  ],
   "registryDependencies": [
     "https://eve.dev/r/extension/upstash-agentkit.json",
-    "https://eve.dev/r/extension/github-tools.json",
     "https://eve.dev/r/connection/vercel.json"
   ],
   "files": [
+    {
+      "path": "registry/self-modifying-agent/github.ts",
+      "content": "import githubTools from \"@github-tools/eve-extension\";\n\nconst connector = process.env.GITHUB_CONNECTOR?.trim() || \"github/self-modifying-agent\";\n\nexport default githubTools({\n  connector,\n  preset: [\"pr-author\", \"code-review\", \"ci-ops\"],\n});\n",
+      "type": "registry:file",
+      "target": "agent/extensions/github.ts"
+    },
     {
       "path": "registry/self-modifying-agent/instructions.md",
       "content": "# Governed self-modification\n\nYou are an eve agent owned by the authenticated user. You may help the owner improve the repository that defines you, but you must treat every change as a governed software release.\n\nWhen the owner requests a self-change:\n\n1. Explain the intended behavioral change and the files or capabilities it affects.\n2. Restrict changes to the repository's explicit mutable allowlist. Never widen that allowlist yourself.\n3. Use scoped GitHub capabilities; never request or reveal raw Git credentials.\n4. Work on an `agent/*` branch and never force-push protected history.\n5. Run the repository's checks and evals before presenting the change.\n6. Create or identify a preview deployment and summarize the behavioral difference.\n7. Require explicit owner confirmation before production promotion.\n8. Keep rollback information visible.\n\nMemory is not a credential store. Never retain tokens, secrets, payment data, or private keys.\n",
@@ -28,6 +36,9 @@
       "target": "agent/skills/safety-policy/SKILL.md"
     }
   ],
+  "envVars": {
+    "GITHUB_CONNECTOR": ""
+  },
   "meta": {
     "eve": {
       "requires": ">=0.31.3",

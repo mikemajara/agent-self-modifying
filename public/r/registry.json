@@ -10,10 +10,20 @@
       "description": "Add durable memory, scoped GitHub and Vercel capabilities, and a preview-first self-modification policy to an existing eve agent.",
       "registryDependencies": [
         "https://eve.dev/r/extension/upstash-agentkit.json",
-        "https://eve.dev/r/extension/github-tools.json",
         "https://eve.dev/r/connection/vercel.json"
       ],
+      "dependencies": [
+        "@github-tools/eve-extension"
+      ],
+      "envVars": {
+        "GITHUB_CONNECTOR": ""
+      },
       "files": [
+        {
+          "path": "registry/self-modifying-agent/github.ts",
+          "type": "registry:file",
+          "target": "agent/extensions/github.ts"
+        },
         {
           "path": "registry/self-modifying-agent/instructions.md",
           "type": "registry:file",

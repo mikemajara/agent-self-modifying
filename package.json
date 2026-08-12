@@ -52,6 +52,7 @@
     "zod": "4.4.3"
   },
   "devDependencies": {
+    "@github-tools/eve-extension": "^0.3.2",
     "@types/node": "24.x",
     "@types/react": "19.2.15",
     "@types/react-dom": "19.2.3",
