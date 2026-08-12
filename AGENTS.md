@@ -45,5 +45,9 @@ not production browser authentication.
 The current reproducible verification baseline is Eve `0.31.3`; check the installed
 Eve changelog before upgrading because official extension hook contracts can change.
 
+The GitHub extension is installed with an empty `GITHUB_TOKEN` declaration. Before
+testing GitHub tools, configure that secret in the consumer's `.env.local` or Vercel
+environment and redeploy. Never ask a user to paste the token into model context.
+
 Before implementing an integration yourself, use `eve registry search <query>` /
 `eve add <item>`.

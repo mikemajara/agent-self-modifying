@@ -36,6 +36,10 @@ Reinstalling without `--overwrite` skipped existing files and preserved an inten
 
 Eve 0.31.3 does not execute official dependency setup flows transitively when they are referenced by a third-party parent item. The registry therefore installs environment declarations and integration source, while provider authorization and team/project selection remain explicit follow-up steps. We must not recreate those flows in a custom installer.
 
+In particular, the official GitHub tools item declares `GITHUB_TOKEN` but does not
+provision it. Consumers must configure a narrowly scoped token (or explicitly change
+the mount to a Vercel Connect GitHub connector) in local and deployed environments.
+
 ## Update policy
 
 Every release should include generated registry JSON and a concise change classification:

@@ -29,6 +29,26 @@ Today, Eve installs their code, packages, and environment declarations transitiv
 
 The raw GitHub URL becomes usable after these generated artifacts are merged to `main`. During registry development, use the local loop below.
 
+## Enable GitHub tools
+
+The core item installs the official GitHub tools extension, but credentials remain owned by the consuming project. Its default mount reads `GITHUB_TOKEN`; an empty declaration is intentional and does not grant repository access.
+
+For local development, set `GITHUB_TOKEN` in the consumer's `.env.local` using a fine-grained GitHub token scoped only to the repositories and operations the agent needs. Do not paste the token into an agent prompt or commit it.
+
+For a Vercel deployment, add the secret interactively to each environment that will run the agent, then redeploy:
+
+```bash
+cd /path/to/my-agent
+npx vercel env add GITHUB_TOKEN development
+npx vercel env add GITHUB_TOKEN preview
+npx vercel env add GITHUB_TOKEN production
+npx eve deploy
+```
+
+The token should have only the required repository permissions (typically repository metadata, contents, pull requests, and issues; add Actions/checks permissions only if those tools are used). Verify presence with `vercel env ls` or a setup diagnostic, never by printing the value.
+
+If you want Vercel Connect-managed GitHub App credentials instead of a PAT, provision a GitHub connector through Vercel Connect and change the consuming project's `agent/extensions/github.ts` mount to `githubTools({ connector: "github/<connector-name>" })`. That connector setup is consumer-owned and is not guessed by this registry.
+
 ## Use the TUI with a deployed agent
 
 The TUI can connect to a running Vercel deployment; it does not require a local checkout of that consumer:
