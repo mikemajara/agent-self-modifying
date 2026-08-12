@@ -34,16 +34,18 @@ A clean-install smoke test confirmed that the item:
 
 Reinstalling without `--overwrite` skipped existing files and preserved an intentional local edit. This is the default update behavior we want.
 
-Eve 0.31.3 does not execute official dependency setup flows transitively when they are referenced by a third-party parent item. The registry therefore installs environment declarations and integration source, while provider authorization and team/project selection remain explicit follow-up steps. We must not recreate those flows in a custom installer.
+Eve 0.31.3 does not execute setup metadata for third-party URL items; the CLI parses `meta.eve.setup` only for official `eve.dev` addresses. The registry therefore prints one explicit consumer-owned command, `node scripts/setup-self-modifying-agent.mjs`. That script composes Eve's official Vercel setup with provider CLIs, keeps prompts and secrets in the trusted local terminal, and records actual configuration rather than asking the model to infer it. If Eve later permits trusted third-party setup metadata, the same flow can move behind the install confirmation panel.
 
-The GitHub tools mount supports Connect, but installation cannot create or attach a
-connector because that requires the consumer to choose a Vercel team, project, and
-GitHub account. Consumers create and attach a connector with
-`vercel connect create github --name <connector-name>` and
-`vercel connect attach github/<connector-name> --yes`, then set
-`GITHUB_CONNECTOR=github/<connector-name>` in local and Vercel environments. Vercel
-owns the GitHub App credentials and issues short-lived runtime tokens. A static
-`GITHUB_TOKEN` is only an explicit fallback, not the default setup path.
+The setup command lets the consumer choose the Vercel team/project, GitHub account,
+connector, and exact `owner/repository` scope. Vercel owns the GitHub App credentials
+and issues short-lived runtime tokens. The installed GitHub mount enforces repository,
+`agent/*` branch, mutable-path, and approval constraints before writes execute. A static
+`GITHUB_TOKEN` is only an explicit source customization, not the default setup path.
+
+Setup completeness is evaluated once per Eve session by a dynamic instruction. Missing
+configuration is announced proactively in the first response; a verified session does
+not repeat onboarding. Runtime authorization failures still take precedence because
+configuration can drift after session start.
 
 ## Update policy
 

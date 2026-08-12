@@ -9,15 +9,18 @@
       "title": "Governed self-modifying eve agent",
       "description": "Add durable memory, scoped GitHub and Vercel capabilities, and a preview-first self-modification policy to an existing eve agent.",
       "registryDependencies": [
-        "https://eve.dev/r/extension/upstash-agentkit.json",
-        "https://eve.dev/r/connection/vercel.json"
+        "https://eve.dev/r/extension/upstash-agentkit.json"
       ],
       "dependencies": [
-        "@github-tools/eve-extension"
+        "@github-tools/eve-extension",
+        "@vercel/connect"
       ],
       "envVars": {
-        "GITHUB_CONNECTOR": ""
+        "GITHUB_CONNECTOR": "",
+        "GITHUB_REPOSITORY": "",
+        "SELF_MODIFYING_SETUP_VERSION": ""
       },
+      "docs": "Installed. Complete trusted local onboarding with: node scripts/setup-self-modifying-agent.mjs",
       "files": [
         {
           "path": "registry/self-modifying-agent/github.ts",
@@ -30,6 +33,11 @@
           "target": "agent/instructions/self-modifying.md"
         },
         {
+          "path": "registry/self-modifying-agent/setup-status.ts",
+          "type": "registry:file",
+          "target": "agent/instructions/self-modifying-setup.ts"
+        },
+        {
           "path": "registry/self-modifying-agent/self-improvement.md",
           "type": "registry:file",
           "target": "agent/skills/self-improvement/SKILL.md"
@@ -38,6 +46,16 @@
           "path": "registry/self-modifying-agent/safety-policy.md",
           "type": "registry:file",
           "target": "agent/skills/safety-policy/SKILL.md"
+        },
+        {
+          "path": "registry/self-modifying-agent/vercel.ts",
+          "type": "registry:file",
+          "target": "agent/connections/vercel.ts"
+        },
+        {
+          "path": "registry/self-modifying-agent/setup-self-modifying-agent.mjs",
+          "type": "registry:file",
+          "target": "scripts/setup-self-modifying-agent.mjs"
         }
       ],
       "meta": {

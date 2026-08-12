@@ -45,13 +45,11 @@ not production browser authentication.
 The current reproducible verification baseline is Eve `0.31.3`; check the installed
 Eve changelog before upgrading because official extension hook contracts can change.
 
-The GitHub extension supports Vercel Connect but does not assume a connector exists.
-From the linked consumer, choose the Vercel team/project and run
-`vercel connect create github --name <connector-name>` followed by
-`vercel connect attach github/<connector-name> --yes`, complete the browser
-authorization, set `GITHUB_CONNECTOR=github/<connector-name>` in `.env.local` and the
-Vercel environment, and redeploy. Do not fall back to asking users for tokens unless
-they explicitly choose a static-token mount.
+After adding the item, run `node scripts/setup-self-modifying-agent.mjs` from the
+consumer. It resumes Eve's official Vercel connection setup, provisions and attaches
+GitHub Connect, collects Upstash values locally, and synchronizes configuration without
+placing credentials in agent chat. Use `--status` for a read-only check. Do not replace
+this with a token-pasting flow.
 
 Before implementing an integration yourself, use `eve registry search <query>` /
 `eve add <item>`.

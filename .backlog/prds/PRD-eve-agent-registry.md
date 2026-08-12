@@ -31,6 +31,8 @@ The registry composes official eve integrations wherever possible and owns only 
 ### What this registry owns
 
 - Self-modification instructions and safety skills.
+- Session-start onboarding detection and a single trusted local setup entrypoint.
+- Executable repository, branch, mutable-path, and approval enforcement around upstream GitHub/Vercel capabilities.
 - A deterministic composition of compatible official eve integrations.
 - Compatibility metadata, release notes, migrations, and install/update tests.
 - Evals proving owner authorization and governed mutation behavior.
@@ -69,10 +71,12 @@ Every release must state its minimum eve version and classify changes as compati
 
 - Root `registry.json` is a valid shadcn source registry consumable by eve.
 - `self-modifying-agent` installs into a clean eve project with one `eve add` command.
-- The item composes official `extension/upstash-agentkit` and `connection/vercel` items, mounts the official GitHub Tools package with an optional consumer-provided Connect connector, and keeps Web as an explicit optional Eve channel add-on.
+- The item composes official `extension/upstash-agentkit`, owns an approval-gated Vercel connection file compatible with Eve's official connection setup, mounts official GitHub Tools with consumer-provided Connect and repository scope, and keeps Web as an explicit optional Eve channel add-on.
 - Telegram rejects missing, unknown, and non-owner identities before a model turn receives mutation capabilities.
 - Installed source contains no repository-local imports or hidden dependency on this publisher app.
-- Provider setup remains explicit until eve supports transitive setup flows for third-party parent items; the integration must never guess account, team, project, or connector selection.
+- Installation immediately prints one setup entrypoint. The setup remains explicit until Eve supports trusted third-party setup metadata, and it must never guess account, team, project, connector, repository, or credential selection.
+- Setup completeness resolves once per session through dynamic instructions. Incomplete sessions announce the missing capabilities; complete sessions do not repeat onboarding.
+- GitHub writes fail closed outside `GITHUB_REPOSITORY`, outside `agent/*`, outside the mutable allowlist, or against governance-owned source.
 - Reinstall/update never silently overwrites user-owned files.
 - Registry validation, build, clean-install, update-with-local-edit, and compatibility tests run in CI.
 - The repository is not marketed or configured as a GitHub template and exposes no custom bootstrap script or Deploy Button.
@@ -81,13 +85,13 @@ Every release must state its minimum eve version and classify changes as compati
 
 ## Acceptance criteria
 
-- [ ] `npx shadcn@latest registry validate ./registry.json` passes.
-- [ ] `npx shadcn@latest build registry.json --output public/r` produces a catalog and item payload.
-- [ ] A clean `eve init` project installs the local built item without this repository being published.
-- [ ] `eve info` discovers every installed channel, extension, connection, instruction, and skill without diagnostics.
-- [ ] The installed project typechecks and builds.
-- [ ] Provider configuration documents account/team selection and can be resumed without reinstalling or overwriting owned source.
-- [ ] Reinstalling over a locally edited skill preserves it unless overwrite is explicitly selected.
+- [x] `npx shadcn@latest registry validate ./registry.json` passes.
+- [x] `npx shadcn@latest build registry.json --output public/r` produces a catalog and item payload.
+- [x] A clean `eve init` project installs the local built item without this repository being published.
+- [x] `eve info` discovers every installed extension, connection, instruction, and skill without diagnostics after the normal model-selection prerequisite.
+- [x] The installed project typechecks and builds.
+- [x] Provider configuration is one resumable local command and does not reinstall or overwrite owned source.
+- [x] Reinstalling over a locally edited skill preserves it unless overwrite is explicitly selected.
 - [ ] The owner-gated Telegram adapter rejects unauthorized identities in tests.
 - [ ] The registry can be consumed by GitHub address after publication.
 - [ ] GitHub template mode and template-specific onboarding are removed only after the local install/update suite passes.
@@ -106,4 +110,4 @@ Every release must state its minimum eve version and classify changes as compati
 - Which official GitHub tool operations are sufficient for branch, patch, PR, and rollback workflows without a custom credential-bearing tool.
 - Whether owner linking should remain a Telegram environment allowlist or move to a channel-neutral identity-linking capability.
 - Whether Telegram lifecycle commands should ship from a small CLI package or wait for registry support for safe package-script merging.
-- Whether/when eve will execute official dependency setup flows transitively for third-party registry items.
+- Whether/when Eve will allow trusted setup metadata for third-party registry item URLs, eliminating the explicit post-install command.

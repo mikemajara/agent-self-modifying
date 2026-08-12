@@ -12,12 +12,13 @@
     "dev": "next dev",
     "start": "next start",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "node --experimental-strip-types --test agent/lib/allowlist.test.ts",
+    "test": "node --experimental-strip-types --test agent/lib/allowlist.test.ts registry/self-modifying-agent/*.test.ts",
     "build:eve": "eve build",
     "dev:eve": "eve dev",
     "start:eve": "eve start",
     "registry:validate": "npx shadcn@latest registry validate ./registry.json",
     "registry:build": "npx shadcn@latest build registry.json --output public/r",
+    "registry:verify-consumer": "node scripts/verify-registry-consumer.mjs",
     "info": "eve info"
   },
   "dependencies": {

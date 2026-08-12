@@ -8,6 +8,7 @@ This repository is the registry source and its development fixture. It is not an
 
 - Durable Upstash AgentKit memory.
 - Scoped GitHub tools and a Vercel MCP connection from official eve integrations.
+- Machine-enforced repository, branch, and mutable-path boundaries for GitHub writes.
 - A governed `agent/*` branch → checks → preview → owner-confirmed production workflow.
 - Explicit safety instructions for mutation boundaries, secrets, approvals, and rollback.
 - Copy-owned source: local customization is preserved unless the user deliberately requests overwrite.
@@ -25,35 +26,45 @@ npx eve add https://raw.githubusercontent.com/mikemajara/agent-self-modifying/ma
 
 The core item composes Upstash AgentKit, GitHub Tools, and the Vercel connection, then adds this project's self-modification policy files. It intentionally does not install a UI or an external chat channel.
 
-Today, Eve installs the code, packages, and environment declarations transitively, but Eve 0.31.3 does not run provider setup flows through a third-party parent item. Account login, Vercel team/project selection, and Telegram bot creation therefore remain explicit provider/eve steps after installation. The registry never guesses a team, creates a connector, or invents a connector UID.
+Eve 0.31.3 installs third-party item code, packages, and environment declarations transitively, but only official `eve.dev` items may launch trusted setup metadata directly from `eve add`. This item therefore prints one explicit next command after installation:
+
+```bash
+node scripts/setup-self-modifying-agent.mjs
+```
+
+That local, user-owned script resumes Eve's official Vercel connection setup, launches GitHub Connect authorization, asks for the repository scope, accepts Upstash credentials through the terminal rather than agent chat, and synchronizes configuration to `.env.local` and the linked Vercel project. It does not guess an account, team, project, connector, or repository.
 
 The raw GitHub URL becomes usable after these generated artifacts are merged to `main`. During registry development, use the local loop below.
 
-## Enable GitHub tools
+## Complete onboarding
 
-The core item installs the official GitHub tools extension. It does not require a personal access token, but Connect still has to be provisioned in the consuming project. `GITHUB_CONNECTOR` is intentionally empty until you choose the Vercel team/project and attach a GitHub connector; the registry does not assume that `github/self-modifying-agent` exists.
-
-From the linked consumer project, create a connector once and attach it to the project. Replace `my-agent` with the connector name you choose:
+Run the installed setup command from the consuming project:
 
 ```bash
-cd /path/to/my-agent
-vercel link
-vercel connect create github --name my-agent
-vercel connect attach github/my-agent --yes
-printf 'GITHUB_CONNECTOR=github/my-agent\n' >> .env.local
+node scripts/setup-self-modifying-agent.mjs
 ```
 
-Vercel opens a browser flow where you choose the GitHub account/organization and repositories. Vercel Connect stores the GitHub App credentials and mints short-lived tokens at runtime. The agent's write tools remain approval-gated by default.
+The script is idempotent at the configuration layer: rerunning it uses existing local values where possible and resumes the official connection flow. Check without changing anything with:
 
-After attaching the connector, redeploy and use the same connector in local development:
+```bash
+node scripts/setup-self-modifying-agent.mjs --status
+```
+
+Vercel Connect stores provider authorization and mints short-lived tokens at runtime. No `GITHUB_TOKEN` is needed. GitHub writes are denied in code unless they target the configured `GITHUB_REPOSITORY`, an `agent/*` branch, and an allowed behavior file. Governance-owned instructions and skills remain protected even though they are Markdown.
+
+The installed dynamic setup instruction runs once at `session.started`. An incomplete session proactively reports the missing capabilities and points to the one setup command. A complete session suppresses repeated onboarding. It is an always-on instruction, not a skill the model must remember to load.
+
+After setup, start Eve locally and configure model access through the built-in `/model` flow if it is still missing:
+
+```bash
+npx eve dev
+```
+
+When the local agent is ready, deploy the consuming project—not this registry—with:
 
 ```bash
 npx eve deploy
-vercel env pull
-npm exec -- eve dev
 ```
-
-No `GITHUB_TOKEN` is needed for this path. A static token remains an explicit fallback only if you intentionally replace the generated mount with `githubTools({ token: process.env.GITHUB_TOKEN })`.
 
 ## Use the TUI with a deployed agent
 
@@ -67,13 +78,7 @@ This sends sessions through the deployment's `/eve/v1/*` HTTP API. If the deploy
 
 ## Disposable verification fixtures
 
-The test consumers created while developing this registry live outside the repository under `/tmp` and are not distribution artifacts:
-
-- `/tmp/eve-web-init-check` — latest Web-enabled consumer; Web was initialized first and the core registry item was added afterward.
-- `/tmp/eve-raw-consumer.wGBqWs/app` — headless raw-registry consumer used for the separate Vercel deployment test (`https://eve-raw-consumer.vercel.app`).
-- `/tmp/eve-channel-split.TLf3cP/app` — earlier channel-split deployment fixture.
-
-These directories are disposable and may disappear when `/tmp` is cleaned. The partially failed `/tmp/eve-web-optional-check` fixture is not a supported example. The repository itself is the registry source; consumers should always be recreated with the commands above.
+Clean-install consumers are created under `/tmp/eve-selfmod-consumer.*` during development and CI. They are disposable and are not distribution artifacts. A persistent end-to-end dogfood agent must be a separate Eve-initialized GitHub repository with its own Vercel project and connectors; this registry repository is never that consumer.
 
 ## Optional channels
 

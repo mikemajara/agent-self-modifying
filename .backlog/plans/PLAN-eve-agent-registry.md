@@ -23,7 +23,10 @@ Replace template/bootstrap distribution with a GitHub-hosted eve source registry
 - [x] Verify discovery, typecheck, and eve build in the fixture. (The raw-installed consumer exposed its capabilities locally and built successfully on Vercel after setting the consumer's framework preset to Eve and providing explicit model context metadata.)
 - [x] Test reinstall/update behavior after a local edit.
 - [x] Remove legacy initializer, template setup, Deploy Button, and template-oriented docs/code.
-- [ ] Add registry validation and install/update fixtures to CI.
+- [x] Add registry validation and install/update fixtures to CI.
+- [x] Add one consumer-owned onboarding command that composes official Eve/Vercel setup and never sends secrets through model chat.
+- [x] Add session-start setup detection that announces only incomplete onboarding.
+- [x] Enforce GitHub repository, branch, mutable-path, and governance-file boundaries in executable approval policies.
 - [x] Disable GitHub template mode after the complete local suite passes.
 
 ## Verification
@@ -43,6 +46,6 @@ Replace template/bootstrap distribution with a GitHub-hosted eve source registry
 
 ## Notes
 
-The pivot was pushed as `307a060`; GitHub template mode is disabled. The remaining work is CI automation, Telegram lifecycle helpers, and the separate authentication research task.
+The pivot was pushed as `307a060`; GitHub template mode is disabled. The remaining product work is a persistent deployed dogfood consumer, Telegram lifecycle helpers, and the separate authentication research task.
 
-Observed: eve 0.31.3 installs official dependencies transitively but does not run their declared setup flows from a third-party parent item. Keep provider/team selection explicit and track upstream support; do not restore the custom setup wizard.
+Observed in Eve 0.31.3 source: setup metadata is parsed only for official `eve.dev` item addresses. The third-party item prints `node scripts/setup-self-modifying-agent.mjs`; the installed script resumes the official Vercel setup and runs provider CLIs under explicit local user control. If Eve opens trusted third-party setup metadata later, move this same orchestration behind the TUI install panel.
