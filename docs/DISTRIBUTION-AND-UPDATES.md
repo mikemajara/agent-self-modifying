@@ -36,11 +36,14 @@ Reinstalling without `--overwrite` skipped existing files and preserved an inten
 
 Eve 0.31.3 does not execute official dependency setup flows transitively when they are referenced by a third-party parent item. The registry therefore installs environment declarations and integration source, while provider authorization and team/project selection remain explicit follow-up steps. We must not recreate those flows in a custom installer.
 
-The GitHub tools mount is Connect-backed by default. Consumers create and attach the
-connector with `vercel connect create github --name self-modifying-agent` and
-`vercel connect attach github/self-modifying-agent --yes`; Vercel owns the GitHub App
-credentials and issues short-lived runtime tokens. A static `GITHUB_TOKEN` is only an
-explicit fallback, not the default setup path.
+The GitHub tools mount supports Connect, but installation cannot create or attach a
+connector because that requires the consumer to choose a Vercel team, project, and
+GitHub account. Consumers create and attach a connector with
+`vercel connect create github --name <connector-name>` and
+`vercel connect attach github/<connector-name> --yes`, then set
+`GITHUB_CONNECTOR=github/<connector-name>` in local and Vercel environments. Vercel
+owns the GitHub App credentials and issues short-lived runtime tokens. A static
+`GITHUB_TOKEN` is only an explicit fallback, not the default setup path.
 
 ## Update policy
 

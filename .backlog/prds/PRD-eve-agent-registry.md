@@ -69,10 +69,10 @@ Every release must state its minimum eve version and classify changes as compati
 
 - Root `registry.json` is a valid shadcn source registry consumable by eve.
 - `self-modifying-agent` installs into a clean eve project with one `eve add` command.
-- The item composes official `extension/upstash-agentkit` and `connection/vercel` items, mounts the official GitHub Tools package with a Connect connector, and keeps Web as an explicit optional Eve channel add-on.
+- The item composes official `extension/upstash-agentkit` and `connection/vercel` items, mounts the official GitHub Tools package with an optional consumer-provided Connect connector, and keeps Web as an explicit optional Eve channel add-on.
 - Telegram rejects missing, unknown, and non-owner identities before a model turn receives mutation capabilities.
 - Installed source contains no repository-local imports or hidden dependency on this publisher app.
-- Provider setup remains explicit until eve supports transitive setup flows for third-party parent items; the integration must never guess account or team selection.
+- Provider setup remains explicit until eve supports transitive setup flows for third-party parent items; the integration must never guess account, team, project, or connector selection.
 - Reinstall/update never silently overwrites user-owned files.
 - Registry validation, build, clean-install, update-with-local-edit, and compatibility tests run in CI.
 - The repository is not marketed or configured as a GitHub template and exposes no custom bootstrap script or Deploy Button.

@@ -25,21 +25,22 @@ npx eve add https://raw.githubusercontent.com/mikemajara/agent-self-modifying/ma
 
 The core item composes Upstash AgentKit, GitHub Tools, and the Vercel connection, then adds this project's self-modification policy files. It intentionally does not install a UI or an external chat channel.
 
-Today, Eve installs their code, packages, and environment declarations transitively, but Eve 0.31.3 does not run official provider setup flows through a third-party parent item. Account login, Vercel team/project selection, and Telegram bot creation therefore remain explicit provider/eve steps after installation. We should remove that caveat only when Eve supports transitive third-party setup flows.
+Today, Eve installs the code, packages, and environment declarations transitively, but Eve 0.31.3 does not run provider setup flows through a third-party parent item. Account login, Vercel team/project selection, and Telegram bot creation therefore remain explicit provider/eve steps after installation. The registry never guesses a team, creates a connector, or invents a connector UID.
 
 The raw GitHub URL becomes usable after these generated artifacts are merged to `main`. During registry development, use the local loop below.
 
 ## Enable GitHub tools
 
-The core item installs the official GitHub tools extension with Vercel Connect authentication. It does not require a personal access token. The default connector UID is `github/self-modifying-agent`; set `GITHUB_CONNECTOR` in the consumer if you choose a different connector name.
+The core item installs the official GitHub tools extension. It does not require a personal access token, but Connect still has to be provisioned in the consuming project. `GITHUB_CONNECTOR` is intentionally empty until you choose the Vercel team/project and attach a GitHub connector; the registry does not assume that `github/self-modifying-agent` exists.
 
-From the linked consumer project, create the GitHub connector once and attach it to the project:
+From the linked consumer project, create a connector once and attach it to the project. Replace `my-agent` with the connector name you choose:
 
 ```bash
 cd /path/to/my-agent
 vercel link
-vercel connect create github --name self-modifying-agent
-vercel connect attach github/self-modifying-agent --yes
+vercel connect create github --name my-agent
+vercel connect attach github/my-agent --yes
+printf 'GITHUB_CONNECTOR=github/my-agent\n' >> .env.local
 ```
 
 Vercel opens a browser flow where you choose the GitHub account/organization and repositories. Vercel Connect stores the GitHub App credentials and mints short-lived tokens at runtime. The agent's write tools remain approval-gated by default.
